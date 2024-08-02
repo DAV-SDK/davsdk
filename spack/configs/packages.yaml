@@ -1,3 +1,10 @@
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0>.
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+#
+# Package configuration file for the Data and Vis SDK
+#   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
 packages:
   adios2:
     require:
@@ -29,6 +36,9 @@ packages:
       - "@5.12"
       - "@5.13"
     - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst use_vtkm=on
+    - one_of:
+      - "+raytracing ^ospray@2.10"
+      - ~raytracing
     conflict:
     - "@master"
 

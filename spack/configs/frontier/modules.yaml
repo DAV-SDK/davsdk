@@ -1,3 +1,10 @@
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0>.
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+#
+# Module configuration file for the Data and Vis SDK on Frontier
+#   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
 modules:
   default:
     roots:
@@ -19,19 +26,8 @@ modules:
           +rocm: rocm
           ^vtk-m +rocm: rocm
           ^kokkos +rocm: rocm
-      # visit:
-      #   suffixes:
-      #     ^vtk-m +rocm: rocm
-      # ascent:
-      #   suffixes:
-      #     ^vtk-m +rocm: rocm
       exclude_implicits: true
       include:
-      # Core modules
-      # - cray-mpich
-      # - autoconf
-      # - automake
-      # - cmake
       # Data and Vis modules
       - adios2
       - ascent

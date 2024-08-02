@@ -1,7 +1,10 @@
-# This is a Spack Environment file.
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0>.
+# This file may not be copied, modified, or distributed
+# except according to those terms.
 #
-# It describes a set of packages to be installed, along with
-# configuration settings.
+# Environment configuration file for the Data and Vis SDK on Frontier
+#   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
 spack:
   config:
     install_tree:
@@ -9,12 +12,13 @@ spack:
       padding: 128
 
   include:
+  # Common DAV SDK configs
   - ../packages.yaml
-  # Facility configs
-  - https://github.com/E4S-Project/facility-external-spack-configs/tree/master/frontier/compilers.yaml
-  - https://github.com/E4S-Project/facility-external-spack-configs/tree/master/frontier/packages.yaml
   # Use the ROCm 5.3.0 packages
-  - https://github.com/E4S-Project/facility-external-spack-configs/tree/master/frontier/rocm-5.3.0/packages.yaml
+  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/rocm-5.3.0/packages.yaml
+  # Facility configs
+  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/compilers.yaml
+  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/packages.yaml
 
   definitions:
   - paraview:

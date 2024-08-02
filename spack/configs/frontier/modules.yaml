@@ -1,0 +1,52 @@
+modules:
+  default:
+    roots:
+      lmod: /sw/frontier/ums/ums032/spack/modules/20240709/
+    enable:
+    - lmod
+    lmod:
+      defaults: [cray-mpich@8.1.23]
+      core_compilers: [gcc@12.2.0]
+      verbose: true
+      hash_length: 0
+      'hierarchy:': []
+      all:
+        autoload: direct
+        environment:
+          set:
+            "{name}_ROOT": "{prefix}"
+        suffixes:
+          +rocm: rocm
+          ^vtk-m +rocm: rocm
+          ^kokkos +rocm: rocm
+      # visit:
+      #   suffixes:
+      #     ^vtk-m +rocm: rocm
+      # ascent:
+      #   suffixes:
+      #     ^vtk-m +rocm: rocm
+      exclude_implicits: true
+      include:
+      # Core modules
+      # - cray-mpich
+      # - autoconf
+      # - automake
+      # - cmake
+      # Data and Vis modules
+      - adios2
+      - ascent
+      - hdf5
+      - hdf5-vol-async
+      - hdf5-vol-cache
+      - hdf5-vol-log
+      - libcatalyst
+      - parallel-netcdf
+      - paraview
+      - openpmd # needed for python path with ParaView
+      - visit
+      - vtk-m
+      - kokkos
+      - zfp
+  prefix_inspections:
+    lib64: [LD_LIBRARY_PATH]
+    lib: [LD_LIBRARY_PATH]

@@ -1,0 +1,36 @@
+packages:
+  all:
+    require: ['%gcc@12.2.0 target=zen3']
+  adios2:
+    require: ['@2.9:']
+  ascent:
+    require: ['@0.9:']
+  llvm:
+    require: ["@15.0.7"]
+    variants: ~cuda~flang~gold~ipo+link_llvm_dylib~lld~lldb+llvm_dylib~mlir+omp_as_runtime~omp_debug~omp_tsan~polly
+      internal_unwind=none libcxx=none compiler-rt=none
+  mesa:
+    require: ['@22.1.6 +osmesa~glx+llvm']
+  ospray:
+    require: ['@2.10']
+  paraview:
+    require: +examples+visitbridge+raytracing
+  python:
+    require: ['@3.8:3.8']
+  py-cinemasci:
+    require: [+mpi]
+  unifyfs:
+    require: ['@1.0.1']
+  kokkos:
+    require: ['cxxstd=14']
+  vtk-m:
+    require: ['@2:']
+  vtk:
+    require: ['@8.2.1a']
+  hdf5:
+    require: ['@1.14:']
+  gdal:
+    require: ['@3:']
+  ecp-data-vis-sdk:
+    require:
+    - +adios2+ascent~cinema~darshan~faodel+hdf5~veloc+paraview~visit+zfp+vtkm~unifyfs+pnetcdf~sz~fortran

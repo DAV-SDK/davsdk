@@ -21,7 +21,7 @@ spack:
   - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/packages.yaml
 
   definitions:
-  - paraview:
+  - paraview_specs:
     - matrix:
       - - paraview
       - - "@5.11"
@@ -54,7 +54,7 @@ spack:
       - ^vtk-m ~rocm
 
   - matrix:
-    - - $paraview
+    - - $paraview_specs
     - - $rocm_package
 
   - matrix:

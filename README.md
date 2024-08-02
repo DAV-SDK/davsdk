@@ -37,12 +37,15 @@ git clone -c feature.manyFiles=true https://github.com/spack/spack.git
 # Install Linux for bash/zsh/sh
 . spack/share/spack/setup-env.sh
 
-# Clone the DAV SDK Configs
+# Clone the DAV SDK Configs next to Spack
 git clone https://github.com/dav-sdk/davsdk.git
 ```
 
 Then create an enviornment which includes the common DAV SDK configs and lists the the the DAV SDK member packages as specs.
 One may also list additional user defined specs here and they will be configured with the DAV SDK packages as well.
+
+This configuration is located at `spack/configs/template/spack.yaml` and can be used as a simple starting point for creating
+DAV SDK environments.
 
 ```yaml
 spack:

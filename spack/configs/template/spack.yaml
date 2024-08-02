@@ -1,0 +1,32 @@
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0>.
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+#
+# A template rnvironment configuration file for the Data and Vis SDK
+#   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
+spack:
+  concretizer:
+    unify: true
+
+  include:
+  # Include the DAV SDK package configs
+  # These specify the constraints defined by the DAV SDK
+  - $spack/../davsdk/spack/configs/packages.yaml
+
+ specs:
+  # I/O
+  - adios2
+  - parallel-netcdf
+  - hdf5
+  - hdf5-vol-async
+  - hdf5-vol-cache
+  - hdf5-vol-log
+
+  # Compression
+  - zfp
+
+  # Visualization
+  - ascent
+  - paraview
+  - vtk-m

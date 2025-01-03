@@ -1,0 +1,56 @@
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://www.apache.org/licenses/LICENSE-2.0>.
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+#
+# Package configuration file for the Data and Vis SDK
+#   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
+packages:
+  adios2:
+    require:
+    - +shared+mpi+python+sst+dataman+hdf5+zfp
+
+  hdf5:
+    require:
+    - "@1.14:"
+    - +shared+mpi
+
+  parallel-netcdf:
+    require:
+    - +shared
+
+  ascent:
+    require:
+    - +adios2+openmp+mpi+python+shared+vtkh+dray+test
+    conflict:
+    - "@develop"
+
+  conduit:
+    require:
+    - ~hdf5_compat
+
+  paraview:
+    require:
+    - any_of:
+      - "@5.11"
+      - "@5.12"
+      - "@5.13"
+    - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst use_vtkm=on
+    - one_of:
+      - "+raytracing ^ospray@2.10"
+      - ~raytracing
+    conflict:
+    - "@master"
+
+  libcatalyst:
+    require:
+    - +mpi
+
+  visit:
+    require:
+    - +adios2+hdf5+mpi+python+silo
+
+  vtk-m:
+    require:
+    - "@2:"
+    - +shared+openmp+mpi+rendering+examples

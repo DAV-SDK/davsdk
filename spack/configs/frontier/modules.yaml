@@ -12,7 +12,7 @@ modules:
     enable:
     - lmod
     lmod:
-      defaults: [cray-mpich@8.1.23]
+      defaults: [cray-mpich@8.1.23, rocm/6.0.0]
       core_compilers: [gcc@12.2.0]
       verbose: true
       hash_length: 0

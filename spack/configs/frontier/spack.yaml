@@ -12,13 +12,11 @@ spack:
       padding: 128
 
   include:
-  # Common DAV SDK configs
-  - ../packages.yaml
-  # Use the ROCm 5.3.0 packages
-  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/rocm-5.3.0/packages.yaml
-  # Facility configs
-  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/compilers.yaml
-  - https://raw.githubusercontent.com/E4S-Project/facility-external-spack-configs/master/frontier/packages.yaml
+  - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/packages.yaml
+  - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/compilers.yaml
+  - $FACILITY_CONFIG_ROOT/frontier/compilers.yaml
+  - $FACILITY_CONFIG_ROOT/frontier/packages.yaml
+  - $DAV_SDK_ROOT/spack/configs/packages.yaml
 
   definitions:
   - paraview_specs:

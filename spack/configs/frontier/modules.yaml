@@ -8,7 +8,7 @@
 modules:
   default:
     roots:
-      lmod: /sw/frontier/ums/ums032/spack/modules/20240709/
+      lmod: ${DEPLOY_PREFIX}/modules/dav/${SDK_DEPLOY_VERSION}/
     enable:
     - lmod
     lmod:
@@ -28,21 +28,23 @@ modules:
           ^kokkos +rocm: rocm
       exclude_implicits: true
       include:
-      # Data and Vis modules
+      # Data and Vis Package modules
       - adios2
       - ascent
       - hdf5
+      - parallel-netcdf
+      - paraview
+      - visit
+      - vtk-m
+      - zfp
+
+      # SDK package extensions
       - hdf5-vol-async
       - hdf5-vol-cache
       - hdf5-vol-log
       - libcatalyst
-      - parallel-netcdf
-      - paraview
-      - openpmd # needed for python path with ParaView
-      - visit
-      - vtk-m
+      - openpmd # required to load OpenPMD in PYTHONPATH
       - kokkos
-      - zfp
   prefix_inspections:
     lib64: [LD_LIBRARY_PATH]
     lib: [LD_LIBRARY_PATH]

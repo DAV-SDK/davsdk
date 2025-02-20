@@ -8,7 +8,7 @@
 spack:
   config:
     install_tree:
-      root: /sw/frontier/ums/ums032/spack/
+      root: ${DEPLOY_PREFIX}
       padding: 128
 
   include:
@@ -16,15 +16,15 @@ spack:
   - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/compilers.yaml
   - $FACILITY_CONFIG_ROOT/frontier/compilers.yaml
   - $FACILITY_CONFIG_ROOT/frontier/packages.yaml
-  - $DAV_SDK_ROOT/spack/configs/packages.yaml
+  - $DAV_SDK_CONFIG_ROOT/spack/configs/packages.yaml
 
   definitions:
   - paraview_specs:
     - matrix:
       - - paraview
-      - - "@5.11"
-        - "@5.12"
-        # - "@5.13"
+      - - "@5.11.2"
+        - "@5.12.1"
+        - "@5.13.1"
 
   - rocm_package:
     - +rocm amdgpu_arch=gfx90a

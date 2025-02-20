@@ -18,6 +18,11 @@ spack:
   - $FACILITY_CONFIG_ROOT/frontier/packages.yaml
   - $DAV_SDK_CONFIG_ROOT/spack/configs/packages.yaml
 
+  packages:
+    paraview:
+      require:
+      - +raytracing
+
   definitions:
   - paraview_specs:
     - matrix:
@@ -61,3 +66,4 @@ spack:
 
   concretizer:
     unify: when_possible
+    reuse: false

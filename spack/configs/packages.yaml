@@ -13,7 +13,7 @@ packages:
   hdf5:
     require:
     - "@1.14:"
-    - +shared+mpi
+    - +shared+mpi+threadsafe+tools+hl
 
   parallel-netcdf:
     require:

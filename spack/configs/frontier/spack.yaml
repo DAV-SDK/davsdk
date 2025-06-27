@@ -8,8 +8,10 @@
 spack:
   config:
     install_tree:
-      root: ${DEPLOY_PREFIX}
+      root: $DEPLOY_PREFIX
       padding: 128
+
+  view: false
 
   include:
   - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/packages.yaml
@@ -17,6 +19,7 @@ spack:
   - $FACILITY_CONFIG_ROOT/frontier/compilers.yaml
   - $FACILITY_CONFIG_ROOT/frontier/packages.yaml
   - $DAV_SDK_CONFIG_ROOT/spack/configs/packages.yaml
+  - $DAV_SDK_CONFIG_ROOT/spack/configs/frontier/modules.yaml
 
   packages:
     paraview:
@@ -53,7 +56,7 @@ spack:
   # Visualization
   - matrix:
     - - ascent
-    - - ^vtk-m +rocm
+    - - ^vtk-m +rocm amdgpu_target=gfx90a
       - ^vtk-m ~rocm
 
   - matrix:

@@ -53,4 +53,9 @@ packages:
   vtk-m:
     require:
     - "@2:"
-    - +shared+openmp+mpi+rendering+examples
+    - +shared+openmp+mpi+rendering+examples+fpic
+
+  all:
+    prefer:
+    # Prefer C++14 everywhere
+    - cxxstd=14

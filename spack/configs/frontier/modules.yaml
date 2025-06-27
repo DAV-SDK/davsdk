@@ -9,11 +9,12 @@ modules:
   default:
     roots:
       lmod: ${DEPLOY_PREFIX}/modules/dav/${SDK_DEPLOY_VERSION}/
+      # lmod: /sw/frontier/ums/ums032/spack/modules/dav/25.02.20/
     enable:
     - lmod
     lmod:
-      defaults: [cray-mpich@8.1.23, rocm/6.0.0]
-      core_compilers: [gcc@12.2.0]
+      defaults: [cray-mpich, rocm-core, cray-libsci, libfabric]
+      core_compilers: [gcc@13.2.1]
       verbose: true
       hash_length: 0
       'hierarchy:': []
@@ -29,13 +30,13 @@ modules:
       exclude_implicits: true
       include:
       # Data and Vis Package modules
-      - adios2
+      # - adios2
       - ascent
       - hdf5
       - parallel-netcdf
       - paraview
       - visit
-      - vtk-m
+      # - vtk-m
       - zfp
 
       # SDK package extensions

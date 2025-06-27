@@ -8,13 +8,15 @@
 packages:
   all:
     require: ['%gcc@12.2.0 target=zen3']
+    prefer:
+    - ~fortran # GCC and ROCm fortran runtimes conflict
   adios2:
     require: ['@2.9:']
   ascent:
     require: ['@0.9:']
   llvm:
     require: ["@15.0.7"]
-    variants: ~cuda~flang~gold~ipo+link_llvm_dylib~lld~lldb+llvm_dylib~mlir+omp_as_runtime~omp_debug~omp_tsan~polly
+    prefer:  ~cuda~flang~gold~ipo+link_llvm_dylib~lld~lldb+llvm_dylib~mlir+omp_as_runtime~omp_debug~omp_tsan~polly
       internal_unwind=none libcxx=none compiler-rt=none
   mesa:
     require: ['@22.1.6 +osmesa~glx+llvm']
@@ -41,3 +43,12 @@ packages:
   ecp-data-vis-sdk:
     require:
     - +adios2+ascent~cinema~darshan~faodel+hdf5~veloc+paraview~visit+zfp+vtkm~unifyfs+pnetcdf~sz~fortran
+  libfabric:
+    require:
+    - "@1.22.0"
+  cray-mpich:
+    require:
+    - "@8.1.23"
+  cray-libsci:
+    require:
+    - "@22.12.1.1"

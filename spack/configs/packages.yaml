@@ -13,7 +13,7 @@ packages:
   hdf5:
     require:
     - "@1.14:"
-    - +shared+mpi
+    - +shared+mpi+threadsafe+tools+hl
 
   parallel-netcdf:
     require:
@@ -53,4 +53,9 @@ packages:
   vtk-m:
     require:
     - "@2:"
-    - +shared+openmp+mpi+rendering+examples
+    - +shared+openmp+mpi+rendering+examples+fpic
+
+  all:
+    prefer:
+    # Prefer C++14 everywhere
+    - cxxstd=14

@@ -3,7 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 #
-# A template rnvironment configuration file for the Data and Vis SDK
+# A template environment configuration file for the Data and Vis SDK
 #   maintainer: Ryan Krattiger @kwryankrattiger (ryan.krattiger@kitware.com)
 spack:
   concretizer:
@@ -14,7 +14,7 @@ spack:
   # These specify the constraints defined by the DAV SDK
   - $spack/../davsdk/spack/configs/packages.yaml
 
- specs:
+  specs:
   # I/O
   - adios2
   - parallel-netcdf

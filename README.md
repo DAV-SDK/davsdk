@@ -57,7 +57,7 @@ spack:
   # These specify the constraints defined by the DAV SDK
   - $spack/../davsdk/spack/configs/packages.yaml
 
- specs:
+  specs:
   # I/O
   - adios2
   - parallel-netcdf

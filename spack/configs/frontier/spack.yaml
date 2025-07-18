@@ -12,11 +12,11 @@ spack:
       padding: 128
 
   include:
-  - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/packages.yaml
-  - $FACILITY_CONFIG_ROOT/frontier/rocm-6.0.0/compilers.yaml
-  - $FACILITY_CONFIG_ROOT/frontier/compilers.yaml
-  - $FACILITY_CONFIG_ROOT/frontier/packages.yaml
-  - $DAV_SDK_ROOT/spack/configs/packages.yaml
+  - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/packages.yaml
+  - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/compilers.yaml
+  - $SPACK_CONFIG_FACILITY_DIR/frontier/compilers.yaml
+  - $SPACK_CONFIG_FACILITY_DIR/frontier/packages.yaml
+  - $SPACK_CONFIG_DAV_SDK_DIR/packages.yaml
 
   definitions:
   - paraview_specs:

@@ -77,3 +77,28 @@ spack:
 
 **Note**: In this example `unify: true` is specified. The configurations for the DAV SDK are designed to be compatible in a
 fully unified environment with all of the member packages listed. This is not, however, a requirement of the SDK configs.
+
+
+## Using Spack Manager
+
+The DAV SDK configs can be installed via Spack with `spack install spack-configs-dav-sdk`, which will also install the facility configs.
+These can be used to make a [Spack Manager](https://sandialabs.github.io/spack-manager/index.html) project for the DAV SDK.
+
+Let `davsdk-project` be the Spack Manager project directory. Link the necessary configs into the project.
+
+```console
+mkdir -p davsdk-prokect/configs/base
+
+# Link base DAV SDK config
+ln -s $SPACK_CONFIG_DAV_SDK_DIR/packages.yaml davsdk-project/configs/base/packages.yaml
+
+# Link specific facility configs
+ln -s $SPACK_CONFIG_FACILITY_DIR/<facility> davsdk-project/configs/<facility>
+```
+
+The project can then be added to Spack Manager and used to create a Spack environment.
+
+```console
+spack manager add davsdk-project
+spack manager create-env -p davsdk-project -d davsdk-env -m <facility>
+```

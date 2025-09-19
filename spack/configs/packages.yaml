@@ -32,9 +32,10 @@ packages:
   paraview:
     require:
     - any_of:
-      - "@5.11"
-      - "@5.12"
+      - "@6.0"
       - "@5.13"
+      - "@5.12"
+      - "@5.11"
     - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst use_vtkm=on
     - one_of:
       - "+raytracing ^ospray@2.10"

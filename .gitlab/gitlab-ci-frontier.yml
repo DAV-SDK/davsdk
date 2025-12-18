@@ -36,7 +36,7 @@ stages:
     GIT_CONFIG_GLOBAL:    "true"
     GITLAB_SITE:          "OLCF Frontier"
     CI_BIN_DIR:           "$CI_PROJECT_DIR/build"
-    SPACK_CONFIG_FACILITY_DIR: "/lustre/orion/ums032/proj-shared/spack-configs/facility"
+    SPACK_CONFIG_FACILITY_DIR: "$CI_PROJECT_DIR/../facility-configs"
     SPACK_CONFIG_DAV_SDK_DIR:  "$CI_PROJECT_DIR/spack/configs"
     # Order matters
     JOB_MODULES: >-

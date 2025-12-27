@@ -8,50 +8,50 @@
 packages:
   adios2:
     require:
-    - +shared+mpi+python+sst+dataman+hdf5+zfp
+      - +shared+mpi+python+sst+dataman+hdf5+zfp
 
   hdf5:
     require:
-    - "@1.14:"
-    - +shared+mpi
+      - "@1.14:"
+      - +shared+mpi
 
   parallel-netcdf:
     require:
-    - +shared
+      - +shared
 
   ascent:
     require:
-    - +adios2+openmp+mpi+python+shared+vtkh+dray+test
+      - +adios2+openmp+mpi+python+shared+vtkh+test
     conflict:
-    - "@develop"
+      - "@develop"
 
   conduit:
     require:
-    - ~hdf5_compat
+      - ~hdf5_compat
 
   paraview:
     require:
-    - any_of:
-      - "@6.0"
-      - "@5.13"
-      - "@5.12"
-      - "@5.11"
-    - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst use_vtkm=on
-    - one_of:
-      - "+raytracing ^ospray@2.10"
-      - ~raytracing
+      - any_of:
+          #- "@6.0"
+          - "@5.13"
+          - "@5.12"
+          - "@5.11"
+      - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst use_vtkm=on
+      - one_of:
+          - "+raytracing ^ospray@2.10"
+          - ~raytracing
     conflict:
-    - "@master"
+      - "@master"
 
   libcatalyst:
     require:
-    - +mpi
+      - +mpi
 
   visit:
     require:
-    - +adios2+hdf5+mpi+python+silo
+      - +adios2+hdf5+mpi+python+silo
 
   vtk-m:
     require:
-    - "@2:"
-    - +shared+openmp+mpi+rendering+examples
+      - "@2:"
+      - +shared+openmp+mpi+rendering+examples

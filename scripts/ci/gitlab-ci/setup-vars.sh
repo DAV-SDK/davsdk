@@ -1,9 +1,6 @@
 #!/bin/bash --login
 set -e
 
-# CI_ROOT_DIR: Parent directory where spack will be cloned
-export CI_ROOT_DIR="${CI_PROJECT_DIR}/.."
-
 # CI_SOURCE_DIR: Project source directory
 export CI_SOURCE_DIR="${CI_PROJECT_DIR}"
 
@@ -27,7 +24,8 @@ fi
 if [[ ${ci_branch_ref} =~ ^pr[0-9]+_.*$ ]]
 then
   # Original commit is the 2nd parent of the merge commit
-  export CI_ORIGINAL_SHA=$(git rev-parse "${CI_COMMIT_REF}^2")
+  CI_ORIGINAL_SHA=$(git rev-parse "${CI_COMMIT_REF}^2")
+  export CI_ORIGINAL_SHA
 else
   export CI_ORIGINAL_SHA="${CI_COMMIT_REF}"
 fi

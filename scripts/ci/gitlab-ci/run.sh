@@ -45,6 +45,11 @@ case ${STEP} in
       . "${SPACK_ROOT}/share/spack/setup-env.sh"
     fi
 
+    # Clone required facility spack configs
+    if [ ! -d "$SPACK_CONFIG_FACILITY_DIR" ]; then
+      git clone https://github.com/E4S-Project/facility-external-spack-configs.git "$SPACK_CONFIG_FACILITY_DIR"
+    fi
+
     # Activate the environment pointing to the config directory
     spack env activate "${CI_SOURCE_DIR}/spack/configs/${ENV_NAME}"
 

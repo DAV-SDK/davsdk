@@ -8,56 +8,71 @@
 spack:
   config:
     install_tree:
-      root: /sw/frontier/ums/ums032/spack/
+      #root: /sw/frontier/ums/ums032/spack/
       padding: 128
 
   include:
-  - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/packages.yaml
-  - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/compilers.yaml
-  - $SPACK_CONFIG_FACILITY_DIR/frontier/compilers.yaml
-  - $SPACK_CONFIG_FACILITY_DIR/frontier/packages.yaml
-  - $SPACK_CONFIG_DAV_SDK_DIR/packages.yaml
+    - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/packages.yaml
+    - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/compilers.yaml
+    - $SPACK_CONFIG_FACILITY_DIR/frontier/compilers.yaml
+    - $SPACK_CONFIG_FACILITY_DIR/frontier/packages.yaml
+    - $SPACK_CONFIG_DAV_SDK_DIR/packages.yaml
 
   definitions:
-  - paraview_specs:
-    - matrix:
-      - - paraview
-      - - "@5.11"
-        - "@5.12"
-        # - "@5.13"
+    - paraview_specs:
+        - matrix:
+            - - paraview
+            - - "@5.12"
+              - "@5.13"
 
-  - rocm_package:
-    - +rocm amdgpu_arch=gfx90a
-    - ~rocm
+    - rocm_package:
+        - +rocm amdgpu_target=gfx90a
+        - ~rocm
 
   specs:
-  # I/O
-  - matrix:
-    - - adios2
-    - - $rocm_package
+    # I/O
+    - matrix:
+        - - adios2
+        - - $rocm_package
 
-  - parallel-netcdf
-  - hdf5
-  - hdf5-vol-async
-  - hdf5-vol-cache
-  - hdf5-vol-log
+    - parallel-netcdf
+    - hdf5
+    - hdf5-vol-async
+    #- hdf5-vol-cache
+    #- hdf5-vol-log
 
-  # Compression
-  - zfp
+    # Compression
+    - zfp
+    - ascent
+    - $paraview_specs
 
-  # Visualization
-  - matrix:
-    - - ascent
-    - - ^vtk-m +rocm
-      - ^vtk-m ~rocm
+    #- matrix:
+    #    - - $paraview_specs
+    #    - - $rocm_package
 
-  - matrix:
-    - - $paraview_specs
-    - - $rocm_package
-
-  - matrix:
-    - - vtk-m
-    - - $rocm_package
+    - matrix:
+        - - vtk-m
+        - - $rocm_package
 
   concretizer:
     unify: when_possible
+
+  packages:
+    ascent:
+      require: [~dray]
+    raja:
+      require: ['@2023.06.1']
+    gcc:
+      externals:
+        - spec: gcc@12.3.0 languages:='c,c++,fortran'
+          prefix: /usr
+          extra_attributes:
+            compilers:
+              c: /usr/bin/gcc-12
+              cxx: /usr/bin/g++-12
+              fortran: /usr/bin/gfortran-12
+            flags: {}
+            environment:
+              append_path:
+                PKG_CONFIG_PATH: /usr/lib64/pkgconfig
+            extra_rpaths: []

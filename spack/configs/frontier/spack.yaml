@@ -38,8 +38,8 @@ spack:
     - parallel-netcdf
     - hdf5
     - hdf5-vol-async
-    #- hdf5-vol-cache
-    #- hdf5-vol-log
+    - hdf5-vol-cache
+    - hdf5-vol-log
 
     # Compression
     - zfp

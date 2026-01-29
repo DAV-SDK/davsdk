@@ -31,7 +31,7 @@ if [ -z "${SPACK_BUILD_DIR}" ]; then
   export SPACK_BUILD_DIR=${PWD}/build
 fi
 
-export SPACK_PACKAGES_VERSION="develop"
+export SPACK_PACKAGES_VERSION="hdf5-vol-fixes"
 
 : "${NUM_CORES:=4}"
 
@@ -44,7 +44,7 @@ case ${STEP} in
     mkdir -p "${SPACK_BUILD_DIR}/spack-packages"
     cd "${SPACK_BUILD_DIR}/spack-packages"
     git init
-    git remote add origin "https://github.com/spack/spack-packages.git"
+    git remote add origin "https://github.com/qtpowell/spack-packages.git"
     git fetch --depth 1 origin "${SPACK_PACKAGES_VERSION}"
     git checkout FETCH_HEAD
     cd -

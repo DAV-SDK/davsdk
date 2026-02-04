@@ -7,9 +7,10 @@ die() { echo "error: $1"; exit "$2"; }
 while getopts ":hp:" opt; do
   case $opt in
     h)
-      echo "Usage: $0 [-p version] [setup|install|submit]"
+      echo "Usage: $0 [-p version] [setup|install|deploy|submit]"
       echo "  setup   - Setup spack environment"
       echo "  install - Install spack environment"
+      echo "  deploy  - Deploy modules to shared environment"
       echo "  submit  - Submit results (placeholder for CDash/reporting)"
       echo
       echo "  -p version - Specify spack-packages version to use in setup"
@@ -112,6 +113,34 @@ case ${STEP} in
     # Show what was installed
     spack find -lv
     echo "**********Install End**********"
+    ;;
+
+  deploy)
+    echo "**********Deploy Begin**********"
+
+    . "${SPACK_BUILD_DIR}/spack/share/spack/setup-env.sh"
+
+    # Activate the environment
+    spack env activate davsdk
+
+    # Verify environment is active
+    spack env status
+
+    # Default deployment directory
+    : "${SPACK_DEPLOY_DIR:=/lustre/orion/world-shared/ums032/frontier-deployed-env}"
+
+    # Create deployment directory structure
+    mkdir -p "${SPACK_DEPLOY_DIR}/modules"
+
+    # Regenerate lmod modules with deployment path
+    spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"
+    spack module lmod refresh --delete-tree --yes-to-all
+
+    # Show generated modules
+    echo "Generated modules:"
+    find "${SPACK_DEPLOY_DIR}/modules" -type f -name "*.lua" | head -20
+
+    echo "**********Deploy End**********"
     ;;
 
   submit)

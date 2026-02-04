@@ -8,7 +8,7 @@
 spack:
   config:
     install_tree:
-      #root: /sw/frontier/ums/ums032/spack/
+      root: /lustre/orion/world-shared/ums032/frontier-deployed-env/packages
       padding: 128
 
   include:

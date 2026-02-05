@@ -31,12 +31,26 @@ if [ -z "${SPACK_BUILD_DIR}" ]; then
   export SPACK_BUILD_DIR=${PWD}/build
 fi
 
+export SPACK_PACKAGES_VERSION="hdf5-vol-fixes"
+
 : "${NUM_CORES:=4}"
 
 case ${STEP} in
   setup)
     echo "**********Setup Begin**********"
     git clone -c feature.manyFiles=true https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
+
+    # Clone spack-packages
+    mkdir -p "${SPACK_BUILD_DIR}/spack-packages"
+    cd "${SPACK_BUILD_DIR}/spack-packages"
+    git init
+    git remote add origin "https://github.com/qtpowell/spack-packages.git"
+    git fetch --depth 1 origin "${SPACK_PACKAGES_VERSION}"
+    git checkout FETCH_HEAD
+    cd -
+
+    # Point the spack "builtin" repo to the cloned spack-packages
+    printf "repos:\n  builtin: %s/spack-packages/repos/spack_repo/builtin" "$SPACK_BUILD_DIR" >> "${SPACK_BUILD_DIR}/spack/etc/spack/repos.yaml"
 
     echo "**********Setup Begin**********"
     git clone https://github.com/E4S-Project/facility-external-spack-configs.git "${SPACK_CONFIG_FACILITY_DIR}"

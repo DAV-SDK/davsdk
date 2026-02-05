@@ -38,8 +38,8 @@ spack:
     - parallel-netcdf
     - hdf5
     - hdf5-vol-async
-    #- hdf5-vol-cache
-    #- hdf5-vol-log
+    - hdf5-vol-cache
+    - hdf5-vol-log
 
     # Compression
     - zfp
@@ -60,6 +60,8 @@ spack:
   packages:
     ascent:
       require: [~dray]
+    hdf5-vol-log:
+      require: [~hdf5_examples]
     raja:
       require: ['@2023.06.1']
     gcc:

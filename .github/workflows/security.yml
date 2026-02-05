@@ -8,6 +8,7 @@ env:
     kwryankrattiger
     qtpowell
     vicentebolea
+    williamjallen
 
 jobs:
   check_user:

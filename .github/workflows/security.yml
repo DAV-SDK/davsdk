@@ -5,8 +5,9 @@ on:
 
 env:
   ALLOWED_USERNAMES: |
-    vicentebolea
+    kwryankrattiger
     qtpowell
+    vicentebolea
 
 jobs:
   check_user:

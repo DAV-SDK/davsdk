@@ -69,18 +69,18 @@ install:frontier-gcc:
     SCHEDULER_PARAMETERS: "-AUMS032 -pbatch -t 00:50:00 --nice=0 -c${NUM_CORES} --threads-per-core=2 -N 1 -C nvme"
     SPACK_USER_CACHE_COMPUTING_PATH: "/mnt/bb/ums032_auser/spack-cache/"
     SPACK_BUILD_COMPUTING_DIR: "/mnt/bb/ums032_auser/spack-build/"
+    SPACK_DEPLOY_DIR: "/lustre/orion/world-shared/ums032/frontier-deployed-env"
   before_script:
     - *checkout_commit
     - *load_modules
   script:
     - source scripts/ci/gitlab-ci/setup-vars.sh
-    - ls /mnt/bb/ums032_auser/
+    # Copy spack and configs to burst buffer for faster builds
     - rsync -av "${SPACK_BUILD_DIR}/spack" "${SPACK_BUILD_COMPUTING_DIR}"
     - rsync -av "${SPACK_BUILD_DIR}/facility-config" "${SPACK_BUILD_COMPUTING_DIR}"
     - rsync -av "${SPACK_USER_CACHE_PATH}/" "${SPACK_USER_CACHE_COMPUTING_PATH}"
+    # Install on burst buffer
     - SPACK_BUILD_DIR="${SPACK_BUILD_COMPUTING_DIR}" SPACK_USER_CACHE_PATH="${SPACK_USER_CACHE_COMPUTING_PATH}" bash scripts/ci/gitlab-ci/run.sh install
-    # Copy installed spack tree back to lustre for deploy stage
-    - rsync -av "${SPACK_BUILD_COMPUTING_DIR}/spack" "${SPACK_BUILD_DIR}/"
   after_script:
     - *load_modules
     - source scripts/ci/gitlab-ci/setup-vars.sh

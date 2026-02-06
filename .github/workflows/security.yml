@@ -11,7 +11,7 @@ env:
 
 jobs:
   check_user:
-    name: Check User Allowlist
+    name: check_user_allowlist
     runs-on: ubuntu-latest
     steps:
       - name: Verify user is allowed

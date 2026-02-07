@@ -7,9 +7,10 @@ die() { echo "error: $1"; exit "$2"; }
 while getopts "h" opt; do
   case $opt in
     h)
-      echo "Usage: $0 [setup|install|submit]"
+      echo "Usage: $0 [setup|install|deploy|submit]"
       echo "  setup   - Setup spack environment"
       echo "  install - Install spack environment"
+      echo "  deploy  - Deploy modules to shared environment"
       echo "  submit  - Submit results (placeholder for CDash/reporting)"
       ;;
     *)
@@ -36,7 +37,7 @@ fi
 case ${STEP} in
   setup)
     echo "**********Setup Begin**********"
-    git clone -c feature.manyFiles=true https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
+    git clone -c feature.manyFiles=true -b v1.1.0 https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
 
     echo "**********Setup Begin**********"
     git clone https://github.com/E4S-Project/facility-external-spack-configs.git "${SPACK_CONFIG_FACILITY_DIR}"
@@ -88,7 +89,49 @@ case ${STEP} in
 
     # Show what was installed
     spack find -lv
+
+    # Copy installed packages to lustre view if specified
+    if [ -n "${SPACK_VIEW_DIR}" ]; then
+      echo "Creating view at: ${SPACK_VIEW_DIR}"
+      rm -rf "${SPACK_VIEW_DIR}"
+      spack env view enable "${SPACK_VIEW_DIR}"
+      spack env view regenerate
+    fi
+
     echo "**********Install End**********"
+    ;;
+
+  deploy)
+    echo "**********Deploy Begin**********"
+
+    . "${SPACK_BUILD_DIR}/spack/share/spack/setup-env.sh"
+
+    # Activate the environment
+    spack env activate davsdk
+
+    # Verify environment is active
+    spack env status
+
+    # Default deployment directory
+    : "${SPACK_DEPLOY_DIR:=/lustre/orion/world-shared/ums032/frontier-deployed-env}"
+
+    # Create deployment directory structure
+    mkdir -p "${SPACK_DEPLOY_DIR}/modules"
+
+    # Regenerate lmod modules with deployment path
+    spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"
+    spack module lmod refresh --delete-tree --yes-to-all
+
+    # Show generated modules
+    echo "Generated modules:"
+    find "${SPACK_DEPLOY_DIR}/modules" -type f -name "*.lua" | head -20
+
+    # Show view location
+    if [ -n "${SPACK_VIEW_DIR}" ]; then
+      echo "Packages available at: ${SPACK_VIEW_DIR}"
+    fi
+
+    echo "**********Deploy End**********"
     ;;
 
   submit)

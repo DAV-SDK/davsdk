@@ -84,7 +84,13 @@ case ${STEP} in
     spack config blame
 
     # Install the environment with timing and parallel jobs
-    spack -t install "-j$((NUM_CORES*2))" --show-log-on-error --no-check-signature --fail-fast | tee spack_log.out 2>&1
+    spack -t install \
+      "-j$((NUM_CORES*2))" \
+      --show-log-on-error \
+      --no-check-signature \
+      --fail-fast \
+       "--cdash-upload-url=https://open.cdash.org/submit.php?project=DAV-SDK" \
+      | tee spack_log.out 2>&1
 
     # Show what was installed
     spack find -lv

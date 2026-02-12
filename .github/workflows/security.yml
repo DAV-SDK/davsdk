@@ -1,6 +1,9 @@
 name: Security
 
 on:
+  push:
+    branches:
+      - master
   pull_request_target:
 
 env:

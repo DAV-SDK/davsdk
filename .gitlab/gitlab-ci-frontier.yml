@@ -58,7 +58,7 @@ setup:frontier-gcc:
     - *load_modules
   script:
     - source scripts/ci/gitlab-ci/setup-vars.sh
-    - bash scripts/ci/gitlab-ci/run.sh setup
+    - bash scripts/ci/gitlab-ci/run.sh -p develop setup
 
 install:frontier-gcc:
   extends: .frontier-common

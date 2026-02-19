@@ -44,11 +44,10 @@ spack:
     # Compression
     - zfp
     - ascent
-    - $paraview_specs
 
-    #- matrix:
-    #    - - $paraview_specs
-    #    - - $rocm_package
+    - matrix:
+        - - $paraview_specs
+        - - $rocm_package
 
     - matrix:
         - - vtk-m

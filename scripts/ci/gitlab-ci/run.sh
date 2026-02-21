@@ -137,10 +137,12 @@ case ${STEP} in
     : "${SPACK_DEPLOY_DIR:=/lustre/orion/world-shared/ums032/frontier-deployed-env}"
 
     # Create deployment directory structure
-    mkdir -p "${SPACK_DEPLOY_DIR}/modules"
+    mkdir -p "${SPACK_DEPLOY_DIR}/modules" "${SPACK_DEPLOY_DIR}/packages"
 
-    # Point spack at the install tree used during install so it finds the package DB
+    # Install packages from buildcache into the persistent deployment install tree.
+    # The buildcache mirror is already configured in the davsdk env (added during setup).
     spack config add "config:install_tree:root:${SPACK_DEPLOY_DIR}/packages"
+    spack install --no-check-signature
 
     # Regenerate lmod modules with deployment path
     spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"

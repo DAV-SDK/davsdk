@@ -7,9 +7,10 @@ die() { echo "error: $1"; exit "$2"; }
 while getopts ":hp:" opt; do
   case $opt in
     h)
-      echo "Usage: $0 [-p version] [setup|install|submit]"
+      echo "Usage: $0 [-p version] [setup|install|deploy|submit]"
       echo "  setup   - Setup spack environment"
       echo "  install - Install spack environment"
+      echo "  deploy  - Deploy modules to shared environment"
       echo "  submit  - Submit results (placeholder for CDash/reporting)"
       echo
       echo "  -p version - Specify spack-packages version to use in setup"
@@ -47,7 +48,7 @@ fi
 case ${STEP} in
   setup)
     echo "**********Setup Begin**********"
-    git clone -c feature.manyFiles=true https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
+    git clone -c feature.manyFiles=true --depth 1 -b v1.1.0 https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
 
     # Clone spack-packages
     mkdir -p "${SPACK_BUILD_DIR}/spack-packages"
@@ -59,7 +60,7 @@ case ${STEP} in
     cd -
 
     echo "**********Setup Begin**********"
-    git clone https://github.com/E4S-Project/facility-external-spack-configs.git "${SPACK_CONFIG_FACILITY_DIR}"
+    git clone --depth 1 https://github.com/E4S-Project/facility-external-spack-configs.git "${SPACK_CONFIG_FACILITY_DIR}"
 
     # Source spack environment
     . "${SPACK_BUILD_DIR}/spack/share/spack/setup-env.sh"
@@ -106,12 +107,52 @@ case ${STEP} in
     # Show configuration
     spack config blame
 
+    # Install packages to persistent lustre path, use burst buffer for build scratch
+    if [ -n "${SPACK_DEPLOY_DIR}" ]; then
+      spack config add "config:install_tree:root:${SPACK_DEPLOY_DIR}/packages"
+      spack config add "config:build_stage:[${SPACK_BUILD_DIR}/stage]"
+    fi
+
     # Install the environment with timing and parallel jobs
     spack -t install "-j$((NUM_CORES*2))" --show-log-on-error --no-check-signature --fail-fast | tee spack_log.out 2>&1
 
     # Show what was installed
     spack find -lv
+
     echo "**********Install End**********"
+    ;;
+
+  deploy)
+    echo "**********Deploy Begin**********"
+
+    . "${SPACK_BUILD_DIR}/spack/share/spack/setup-env.sh"
+
+    # Activate the environment
+    spack env activate davsdk
+
+    # Verify environment is active
+    spack env status
+
+    # Default deployment directory
+    : "${SPACK_DEPLOY_DIR:=/lustre/orion/world-shared/ums032/frontier-deployed-env}"
+
+    # Create deployment directory structure
+    mkdir -p "${SPACK_DEPLOY_DIR}/modules" "${SPACK_DEPLOY_DIR}/packages"
+
+    # Install packages from buildcache into the persistent deployment install tree.
+    # The buildcache mirror is already configured in the davsdk env (added during setup).
+    spack config add "config:install_tree:root:${SPACK_DEPLOY_DIR}/packages"
+    spack install --no-check-signature
+
+    # Regenerate lmod modules with deployment path
+    spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"
+    spack module lmod refresh --delete-tree --yes-to-all
+
+    # Show generated modules
+    echo "Generated modules:"
+    find "${SPACK_DEPLOY_DIR}/modules" -type f -name "*.lua"
+
+    echo "**********Deploy End**********"
     ;;
 
   submit)

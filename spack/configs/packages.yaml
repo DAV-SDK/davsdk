@@ -31,15 +31,15 @@ packages:
 
   paraview:
     require:
-    - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst
-    - any_of:
-      - "@6.0"
-      - "@5.13 use_vtkm=on"
-      - "@5.12 use_vtkm=on"
-      - "@5.11 use_vtkm=on"
-    - one_of:
-      - "+raytracing ^ospray@2.10"
-      - ~raytracing
+      - +adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst
+      - any_of:
+          - "@6.0"
+          - "@5.13 use_vtkm=on"
+          - "@5.12 use_vtkm=on"
+          - "@5.11 use_vtkm=on"
+      - one_of:
+          - "+raytracing ^ospray@2.10"
+          - ~raytracing
     conflict:
       - "@master"
 

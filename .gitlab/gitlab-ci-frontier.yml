@@ -1,0 +1,203 @@
+# Ad-hoc build that runs in the ECP Hardware, concretely in OLCF Frontier.
+
+default:
+  id_tokens:
+    OLCF_ID_TOKEN:
+      aud: https://code.olcf.ornl.gov
+
+stages:
+  - pre
+  - setup
+  - install
+  - post
+
+.checkout_commit: &checkout_commit |
+  git fetch
+  source scripts/ci/gitlab-ci/setup-vars.sh
+  git checkout "$CI_COMMIT_REF"
+  module purge
+  module load ${JOB_MODULES}
+  module list
+
+.load_modules: &load_modules |
+  module purge
+  module load ${JOB_MODULES}
+  module list
+
+.frontier-common:
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /parent_pipeline|web/ && $MAINTAINANCE_PIPELINE == null
+  interruptible: true
+  variables:
+    CI_BIN_DIR: "$CI_PROJECT_DIR/build"
+    CUSTOM_CI_BUILDS_DIR: "/lustre/orion/ums032/scratch/ums032_auser/ci/davsdk/runtime"
+    GIT_CONFIG_GLOBAL: "true"
+    NUM_CORES: "32"
+    OLCF_SERVICE_ACCOUNT: "ums032_auser"
+    SPACK_DISABLE_LOCAL_CONFIG: "true"
+    SPACK_BUILD_DIR: "${CUSTOM_CI_BUILDS_DIR}/artifacts/spack-build-${CI_PIPELINE_IID}"
+    SPACK_USER_CACHE_PATH: "${SPACK_BUILD_DIR}/cache"
+    SPACK_BUILDCACHE_DIR: "/lustre/orion/world-shared/ums032/frontier-buildcache/"
+
+    # Order matters
+    JOB_MODULES: >-
+      Core/24.00
+      lfs-wrapper
+      PrgEnv-gnu
+      gcc-native/12
+      cmake
+      git
+      ninja
+
+setup:frontier-gcc:
+  extends: .frontier-common
+  stage: setup
+  tags: [shell]
+  before_script:
+    - *checkout_commit
+    - *load_modules
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - bash scripts/ci/gitlab-ci/run.sh -p develop setup
+
+install:frontier-gcc:
+  extends: .frontier-common
+  stage: install
+  tags: [frontier, slurm]
+  variables:
+    SCHEDULER_PARAMETERS: "-AUMS032 -pbatch -t 00:50:00 --nice=0 -c${NUM_CORES} --threads-per-core=2 -N 1 -C nvme"
+    SPACK_USER_CACHE_COMPUTING_PATH: "/mnt/bb/ums032_auser/spack-cache/"
+    SPACK_BUILD_COMPUTING_DIR: "/mnt/bb/ums032_auser/spack-build/"
+  before_script:
+    - *checkout_commit
+    - *load_modules
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - ls /mnt/bb/ums032_auser/
+    - rsync -av "${SPACK_BUILD_DIR}/spack" "${SPACK_BUILD_COMPUTING_DIR}"
+    - rsync -av "${SPACK_BUILD_DIR}/facility-config" "${SPACK_BUILD_COMPUTING_DIR}"
+    - rsync -av "${SPACK_USER_CACHE_PATH}/" "${SPACK_USER_CACHE_COMPUTING_PATH}"
+    - SPACK_BUILD_DIR="${SPACK_BUILD_COMPUTING_DIR}" SPACK_USER_CACHE_PATH="${SPACK_USER_CACHE_COMPUTING_PATH}" bash scripts/ci/gitlab-ci/run.sh install
+  after_script:
+    - *load_modules
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - bash scripts/ci/gitlab-ci/run.sh submit
+  needs:
+    - setup:frontier-gcc
+  dependencies:
+    - setup:frontier-gcc
+  retry: 2
+  artifacts:
+    paths:
+      - spack_log.out
+
+.report-status:
+  tags: [shell]
+  variables:
+    STATUS_PROJECT: dav-sdk/davsdk
+    STATUS_NAME: OLCF Frontier
+  before_script: |
+    git fetch
+    source scripts/ci/gitlab-ci/setup-vars.sh
+    git checkout "$CI_COMMIT_REF"
+  script: >
+    curl -X POST -H "${GITHUB_CURL_HEADERS}"
+    "https://api.github.com/repos/${STATUS_PROJECT}/statuses/${CI_ORIGINAL_SHA}"
+    -d "{\"state\":\"${CI_JOB_NAME}\", \"context\":\"${STATUS_NAME}\",\"target_url\":\"${CI_PIPELINE_URL}\",\"description\":\"${STATUS_DESC}\"}"
+  environment:
+    name: report-$DOWNSTREAM_COMMIT_SHA
+  extends: .frontier-common
+
+pending:
+  stage: pre
+  extends: .report-status
+  variables:
+    STATUS_DESC: Pipeline is running
+
+success:
+  stage: post
+  extends: .report-status
+  variables:
+    STATUS_DESC: Pipeline succeeded
+  dependencies:
+    - setup:frontier-gcc
+    - install:frontier-gcc
+
+failure:
+  stage: post
+  extends: .report-status
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /parent_pipeline|web/ && $MAINTAINANCE_PIPELINE == null
+      when: on_failure
+  variables:
+    STATUS_DESC: Pipeline failed
+  dependencies:
+    - setup:frontier-gcc
+    - install:frontier-gcc
+
+cleanup_spack:
+  stage: post
+  extends: .frontier-common
+  tags: [shell]
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /parent_pipeline|web/ && $MAINTAINANCE_PIPELINE == null
+      when: always
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - rm -rf "${SPACK_BUILD_DIR}"
+  dependencies:
+    - setup:frontier-gcc
+    - install:frontier-gcc
+
+generate_pipelines:
+  stage: setup
+  tags: [frontier, shell]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  variables:
+    CUSTOM_CI_BUILDS_DIR: "/lustre/orion/ums032/scratch/ums032_auser/ci/davsdk/runtime"
+    OLCF_SERVICE_ACCOUNT: "ums032_auser"
+    GL_PROJECT_ID: 121
+    # This the commit where the frontier CI was added, we want to avoid testing
+    # commits before this.
+    ROOT_COMMIT_SHA: 8295a7ceb67718c6f6abb15fc0d0544c485bff50
+  script:
+    - pip install --user urllib3 requests GitPython
+    - >
+      .gitlab/config/generate_pipelines.py
+      -u "https://code.olcf.ornl.gov/"
+      -r "${ROOT_COMMIT_SHA}"
+      -p "${GL_PROJECT_ID}"
+      -n DAV-SDK/davsdk
+      -f .gitlab/config/dynamic_pipeline.yml.in
+      > generated_pipelines.yml
+  artifacts:
+    paths:
+      - generated_pipelines.yml
+
+launch_pipelines:
+  stage: post
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  variables:
+    CUSTOM_CI_BUILDS_DIR: "/lustre/orion/ums032/scratch/ums032_auser/ci/davsdk/runtime"
+    OLCF_SERVICE_ACCOUNT: "ums032_auser"
+  trigger:
+    include:
+      - artifact: generated_pipelines.yml
+        job: generate_pipelines
+
+# Frontier runtime files for the runners occasionally get corrupted,
+# Add manual job to remove it
+wipe_runtime_directory:
+  stage: setup
+  tags: [shell]
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /web/ && $MAINTAINANCE_PIPELINE != null
+  variables:
+    CUSTOM_CI_BUILDS_DIR: "/lustre/orion/ums032/scratch/ums032_auser/ci/davsdk/runtime"
+    OLCF_SERVICE_ACCOUNT: "ums032_auser"
+    GIT_STRATEGY: none
+  script:
+    - rm -vrf "${CUSTOM_CI_BUILDS_DIR}/"*
+    - chmod -vR 730 "${CUSTOM_CI_BUILDS_DIR}/"

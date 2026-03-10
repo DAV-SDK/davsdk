@@ -1,5 +1,6 @@
 #!/bin/bash --login
 # shellcheck disable=SC1091
+#
 set -ex
 
 die() { echo "error: $1"; exit "$2"; }

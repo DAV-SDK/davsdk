@@ -110,6 +110,12 @@ case ${STEP} in
     # Install the environment with timing and parallel jobs
     spack -t install "-j$((NUM_CORES*2))" --show-log-on-error --no-check-signature --fail-fast | tee spack_log.out 2>&1
 
+    # Push installed packages to buildcache with padded paths so deploy
+    # can relocate them to the persistent Lustre install_tree
+    if [ -n "${SPACK_BUILDCACHE_DIR}" ]; then
+      spack buildcache push --unsigned "${SPACK_BUILDCACHE_DIR}"
+    fi
+
     # Show what was installed
     spack find -lv
     echo "**********Install End**********"
@@ -130,7 +136,12 @@ case ${STEP} in
     : "${SPACK_DEPLOY_DIR:=/lustre/orion/world-shared/ums032/frontier-deployed-env}"
 
     # Create deployment directory structure
-    mkdir -p "${SPACK_DEPLOY_DIR}/modules"
+    mkdir -p "${SPACK_DEPLOY_DIR}/packages" "${SPACK_DEPLOY_DIR}/modules"
+
+    # Override install_tree to persistent Lustre location and install from
+    # buildcache (burst buffer entries have padding:128 so relocation works)
+    spack config add "config:install_tree:root:${SPACK_DEPLOY_DIR}/packages"
+    spack install --no-check-signature "-j$((NUM_CORES*2))"
 
     # Regenerate lmod modules with deployment path
     spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"

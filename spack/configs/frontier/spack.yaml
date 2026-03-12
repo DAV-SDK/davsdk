@@ -10,6 +10,8 @@ spack:
     install_tree:
       root: /lustre/orion/world-shared/ums032/frontier-deployed-env/packages
       padding: 128
+    build_stage:
+      - /mnt/bb/$user/spack-stage
 
   include:
     - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/packages.yaml

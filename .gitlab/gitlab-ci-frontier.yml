@@ -111,6 +111,89 @@ deploy:frontier-gcc:
   dependencies:
     - install:frontier-gcc
 
+.frontier-maintenance:
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /web/ && $MAINTAINANCE_PIPELINE != null
+  interruptible: true
+  variables:
+    CI_BIN_DIR: "$CI_PROJECT_DIR/build"
+    CUSTOM_CI_BUILDS_DIR: "/lustre/orion/ums032/scratch/ums032_auser/ci/davsdk/runtime"
+    GIT_CONFIG_GLOBAL: "true"
+    NUM_CORES: "32"
+    OLCF_SERVICE_ACCOUNT: "ums032_auser"
+    SPACK_DISABLE_LOCAL_CONFIG: "true"
+    SPACK_BUILD_DIR: "${CUSTOM_CI_BUILDS_DIR}/artifacts/spack-build-${CI_PIPELINE_IID}"
+    SPACK_USER_CACHE_PATH: "${SPACK_BUILD_DIR}/cache"
+    SPACK_BUILDCACHE_DIR: "/lustre/orion/world-shared/ums032/frontier-buildcache/"
+    JOB_MODULES: >-
+      Core/24.00
+      lfs-wrapper
+      PrgEnv-gnu
+      gcc-native/12
+      cmake
+      git
+      ninja
+
+setup:frontier-gcc:maintenance:
+  extends: .frontier-maintenance
+  stage: setup
+  tags: [shell]
+  before_script:
+    - *checkout_commit
+    - *load_modules
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - bash scripts/ci/gitlab-ci/run.sh -p develop setup
+
+install:frontier-gcc:maintenance:
+  extends: .frontier-maintenance
+  stage: install
+  tags: [frontier, slurm]
+  variables:
+    SCHEDULER_PARAMETERS: "-AUMS032 -pbatch -t 02:00:00 --nice=0 -c${NUM_CORES} --threads-per-core=2 -N 1 -C nvme"
+    SPACK_USER_CACHE_COMPUTING_PATH: "/mnt/bb/ums032_auser/spack-cache/"
+    SPACK_BUILD_COMPUTING_DIR: "/mnt/bb/ums032_auser/spack-build/"
+    SPACK_INSTALL_FLAGS: "--no-cache"
+  before_script:
+    - *checkout_commit
+    - *load_modules
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - ls /mnt/bb/ums032_auser/
+    - rsync -a "${SPACK_BUILD_DIR}/spack" "${SPACK_BUILD_COMPUTING_DIR}"
+    - rsync -a "${SPACK_BUILD_DIR}/facility-config" "${SPACK_BUILD_COMPUTING_DIR}"
+    - rsync -a "${SPACK_USER_CACHE_PATH}/" "${SPACK_USER_CACHE_COMPUTING_PATH}"
+    - SPACK_BUILD_DIR="${SPACK_BUILD_COMPUTING_DIR}" SPACK_USER_CACHE_PATH="${SPACK_USER_CACHE_COMPUTING_PATH}" bash scripts/ci/gitlab-ci/run.sh install
+    - rsync -a "${SPACK_BUILD_COMPUTING_DIR}/spack" "${SPACK_BUILD_DIR}/"
+  after_script:
+    - *load_modules
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - bash scripts/ci/gitlab-ci/run.sh submit
+  needs:
+    - setup:frontier-gcc:maintenance
+  dependencies:
+    - setup:frontier-gcc:maintenance
+  artifacts:
+    paths:
+      - spack_log.out
+
+deploy:frontier-gcc:maintenance:
+  extends: .frontier-maintenance
+  stage: deploy
+  tags: [shell]
+  variables:
+    SPACK_DEPLOY_DIR: "/lustre/orion/world-shared/ums032/frontier-deployed-env"
+  before_script:
+    - *checkout_commit
+    - *load_modules
+  script:
+    - source scripts/ci/gitlab-ci/setup-vars.sh
+    - bash scripts/ci/gitlab-ci/run.sh deploy
+  needs:
+    - install:frontier-gcc:maintenance
+  dependencies:
+    - install:frontier-gcc:maintenance
+
 .report-status:
   tags: [shell]
   variables:

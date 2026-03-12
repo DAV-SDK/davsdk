@@ -108,8 +108,7 @@ case ${STEP} in
     spack config blame
 
     # Install the environment with timing and parallel jobs
-    # shellcheck disable=SC2086
-    spack -t install "-j$((NUM_CORES*2))" --show-log-on-error --no-check-signature --fail-fast ${SPACK_INSTALL_FLAGS:-} | tee spack_log.out 2>&1
+    spack -t install "-j$((NUM_CORES*2))" --show-log-on-error --no-check-signature --fail-fast | tee spack_log.out 2>&1
 
     # Push installed packages to buildcache with padded paths so deploy
     # can relocate them to the persistent Lustre install_tree

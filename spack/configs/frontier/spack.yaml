@@ -8,8 +8,9 @@
 spack:
   config:
     install_tree:
-      #root: /sw/frontier/ums/ums032/spack/
-      padding: 128
+      padded_length: 128
+    build_stage:
+      - /mnt/bb/$user/spack-stage
 
   include:
     - $SPACK_CONFIG_FACILITY_DIR/frontier/rocm-6.0.0/packages.yaml

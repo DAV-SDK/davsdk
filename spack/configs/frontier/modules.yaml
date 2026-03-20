@@ -18,7 +18,7 @@ modules:
       hash_length: 4
       projections:
         all: "{name}/{version}-{compiler.name}{compiler.version}"
-      'hierarchy:': []
+      hierarchy: []
       all:
         autoload: direct
         environment:

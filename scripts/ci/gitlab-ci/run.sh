@@ -143,7 +143,9 @@ case ${STEP} in
     spack config add "config:install_tree:root:${SPACK_DEPLOY_DIR}/packages"
     spack install --no-check-signature "-j$((NUM_CORES*2))"
 
-    # Regenerate lmod modules with deployment path
+    # Purge and regenerate lmod modules with deployment path
+    rm -rf "${SPACK_DEPLOY_DIR}/modules"
+    mkdir -p "${SPACK_DEPLOY_DIR}/modules"
     spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"
     spack module lmod refresh --delete-tree --yes-to-all
 

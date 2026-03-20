@@ -80,7 +80,7 @@ install:frontier-gcc:
     - rsync -a "${SPACK_USER_CACHE_PATH}/" "${SPACK_USER_CACHE_COMPUTING_PATH}"
     - SPACK_BUILD_DIR="${SPACK_BUILD_COMPUTING_DIR}" SPACK_USER_CACHE_PATH="${SPACK_USER_CACHE_COMPUTING_PATH}" bash scripts/ci/gitlab-ci/run.sh install
     # Copy installed spack tree back to lustre for deploy stage
-    - rsync -a "${SPACK_BUILD_COMPUTING_DIR}/spack" "${SPACK_BUILD_DIR}/"
+    #- rsync -a "${SPACK_BUILD_COMPUTING_DIR}/spack" "${SPACK_BUILD_DIR}/"
   after_script:
     - *load_modules
     - source scripts/ci/gitlab-ci/setup-vars.sh

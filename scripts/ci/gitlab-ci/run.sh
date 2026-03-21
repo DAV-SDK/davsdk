@@ -149,19 +149,6 @@ case ${STEP} in
     spack config add "modules:default:roots:lmod:${SPACK_DEPLOY_DIR}/modules"
     spack module lmod refresh --delete-tree --yes-to-all
 
-    # Flatten lmod hierarchy: spack may generate MPI-hierarchy subdirs
-    # (e.g., cray-mpich/<ver>/Core/) — merge them all into the single arch/Core/
-    _arch_dir=$(find "${SPACK_DEPLOY_DIR}/modules" -mindepth 1 -maxdepth 1 -type d | head -1)
-    _top_core="${_arch_dir}/Core"
-    mkdir -p "${_top_core}"
-    find "${_arch_dir}" -mindepth 5 -maxdepth 5 -name "*.lua" | while IFS= read -r _f; do
-      _pkg=$(basename "$(dirname "${_f}")")
-      _file=$(basename "${_f}")
-      mkdir -p "${_top_core}/${_pkg}"
-      mv "${_f}" "${_top_core}/${_pkg}/${_file}"
-    done
-    find "${_arch_dir}" -mindepth 2 -type d -empty -delete
-
     # Show generated modules
     echo "Generated modules:"
     find "${SPACK_DEPLOY_DIR}/modules" -type f -name "*.lua"

@@ -1,0 +1,15 @@
+diff --git a/lib/spack/spack/reporters/cdash.py b/lib/spack/spack/reporters/cdash.py
+index f7a72561cf..d944e1fc9a 100644
+--- a/lib/spack/spack/reporters/cdash.py
++++ b/lib/spack/spack/reporters/cdash.py
+@@ -434,6 +434,10 @@ def upload(self, filename):
+             print("Cannot upload {0} due to missing upload url".format(filename))
+             return
+ 
++        if self.cdash_upload_url == "skip_upload":
++            print("Skipping upload of {0}".format(filename))
++            return
++
+         # Compute md5 checksum for the contents of this file.
+         md5sum = checksum(hashlib.md5, filename, block_size=8192)
+ 

@@ -39,13 +39,17 @@ Pre-built DAV SDK packages are deployed as environment modules on Frontier. To u
 
 ## Setup
 
-Add the DAV SDK module path to your environment:
+The deployed modules use an lmod hierarchy, so two paths must be added: one for
+non-MPI packages and one for MPI-dependent packages. The MPI path includes the
+cray-mpich version and hash, which may change across deployments.
 
 ```console
-$ module use /lustre/orion/world-shared/ums032/frontier-deployed-env/modules/Core
+$ MODULES=/lustre/orion/world-shared/ums032/frontier-deployed-env/modules/linux-sles15-x86_64
+$ module use ${MODULES}/Core
+$ module use ${MODULES}/cray-mpich/$(ls ${MODULES}/cray-mpich/)/Core
 ```
 
-You can add this line to your `~/.bashrc` or job scripts to make it persistent.
+You can add these lines to your `~/.bashrc` or job scripts to make them persistent.
 
 ## Available Modules
 
@@ -95,7 +99,9 @@ Each module automatically sets the `{NAME}_ROOT` environment variable pointing t
 #SBATCH -N 1
 
 # Load DAV SDK modules
-module use /lustre/orion/world-shared/ums032/frontier-deployed-env/modules/Core
+MODULES=/lustre/orion/world-shared/ums032/frontier-deployed-env/modules/linux-sles15-x86_64
+module use ${MODULES}/Core
+module use ${MODULES}/cray-mpich/$(ls ${MODULES}/cray-mpich/)/Core
 module load paraview adios2
 
 # Run your application

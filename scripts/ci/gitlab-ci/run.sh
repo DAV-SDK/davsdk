@@ -113,7 +113,7 @@ case ${STEP} in
     # Push installed packages to buildcache with padded paths so deploy
     # can relocate them to the persistent Lustre install_tree
     if [ -n "${SPACK_BUILDCACHE_DIR}" ]; then
-      spack buildcache push --unsigned "${SPACK_BUILDCACHE_DIR}"
+      spack buildcache push --force --unsigned "${SPACK_BUILDCACHE_DIR}"
     fi
 
     # Show what was installed

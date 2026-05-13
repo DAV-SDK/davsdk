@@ -113,7 +113,8 @@ case ${STEP} in
     # Push installed packages to buildcache with padded paths so deploy
     # can relocate them to the persistent Lustre install_tree
     if [ -n "${SPACK_BUILDCACHE_DIR}" ]; then
-      spack buildcache push --force --unsigned "${SPACK_BUILDCACHE_DIR}" "$(spack find --format "/{hash}")"
+      spack buildcache push --force --unsigned "${SPACK_BUILDCACHE_DIR}" $(spack find --format "/{hash}") \
+        || echo "Warning: some packages (likely externals) could not be pushed to buildcache"
     fi
 
     # Show what was installed

@@ -20,7 +20,7 @@ packages:
   ospray:
     require: ['@2.10']
   paraview:
-    require: +examples+visitbridge+raytracing
+    require: +examples+visitbridge~raytracing
   python:
     require: ['@3.8:3.8']
   py-cinemasci:

@@ -15,14 +15,17 @@ modules:
       defaults: [cray-mpich@8.1.23, rocm/6.0.0]
       core_compilers: [gcc@12.2.0]
       verbose: true
-      hash_length: 0
-      'hierarchy:': []
+      hash_length: 4
+      projections:
+        all: "{name}/{version}-{compiler.name}{compiler.version}"
+      hierarchy: []
       all:
         autoload: direct
         environment:
           set:
             "{name}_ROOT": "{prefix}"
         suffixes:
+          +mpi: mpi
           +rocm: rocm
           ^vtk-m +rocm: rocm
           ^kokkos +rocm: rocm

@@ -4,19 +4,23 @@ set -ex
 
 die() { echo "error: $1"; exit "$2"; }
 
-while getopts ":hp:" opt; do
+while getopts ":hp:s:" opt; do
   case $opt in
     h)
-      echo "Usage: $0 [-p version] [setup|install|submit]"
+      echo "Usage: $0 [-p version] [-s version] [setup|install|submit]"
       echo "  setup   - Setup spack environment"
       echo "  install - Install spack environment"
       echo "  submit  - Submit results (placeholder for CDash/reporting)"
       echo
       echo "  -p version - Specify spack-packages version to use in setup"
+      echo "  -s version - Specify spack version to use in setup"
       exit 0
       ;;
     p)
       SPACK_PACKAGES_VERSION=$OPTARG
+      ;;
+    s)
+      SPACK_VERSION=$OPTARG
       ;;
     *)
       die "Invalid option: -$OPTARG" 1
@@ -37,7 +41,11 @@ if [ -z "${SPACK_BUILD_DIR}" ]; then
   export SPACK_BUILD_DIR=${PWD}/build
 fi
 
-# default to develop if unspecified
+# default to latest stable releases if unspecified
+if [ -z "${SPACK_VERSION}" ]; then
+  SPACK_VERSION="v1.1.1"
+fi
+
 if [ -z "${SPACK_PACKAGES_VERSION}" ]; then
   SPACK_PACKAGES_VERSION="develop"
 fi
@@ -47,7 +55,7 @@ fi
 case ${STEP} in
   setup)
     echo "**********Setup Begin**********"
-    git clone -c feature.manyFiles=true https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
+    git clone -c feature.manyFiles=true --depth 1 --branch "${SPACK_VERSION}" https://github.com/spack/spack.git "${SPACK_BUILD_DIR}/spack"
 
     # Apply patch to be able to skip the cdash upload during spack install
     patch="$(pwd)/scripts/ci/gitlab-ci/cdash-upload.patch"

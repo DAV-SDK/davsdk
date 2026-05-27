@@ -23,7 +23,8 @@ spack:
         - matrix:
             - - paraview
             - - "@5.12"
-              - "@5.13"
+            - - "@5.13"
+              - "@6.0"
 
     - rocm_package:
         - +rocm amdgpu_target=gfx90a

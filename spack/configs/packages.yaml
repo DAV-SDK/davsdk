@@ -27,7 +27,7 @@ packages:
 
   conduit:
     require:
-      - ~hdf5_compat
+      - +hdf5
 
   paraview:
     require:
